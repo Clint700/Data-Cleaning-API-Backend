@@ -12,7 +12,7 @@ const fetchInvalidData = async () => {
 
 const insertValidData = async ({ full_name, email }) => {
   const { rows } = await db.query(
-    'INSERT INTO validData (full_name, email) VALUES ($1, $2) RETURNING *',
+    "INSERT INTO validData (full_name, email) VALUES ($1, $2) RETURNING *",
     [full_name, email]
   );
   return rows[0];
@@ -20,11 +20,13 @@ const insertValidData = async ({ full_name, email }) => {
 
 const insertInvalidData = async ({ full_name, email, error_reason }) => {
   const { rows } = await db.query(
-    'INSERT INTO invalidData (full_name, email, error_reason) VALUES ($1, $2, $3) RETURNING *',
+    "INSERT INTO invalidData (full_name, email, error_reason) VALUES ($1, $2, $3) RETURNING *",
     [full_name, email, error_reason]
   );
   return rows[0];
 };
+
+module.exports = { insertValidData, insertInvalidData };
 
 const updateValidDataById = async (id, updates) => {
   const { rows } = await db.query(

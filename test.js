@@ -14,36 +14,49 @@ afterAll(() => {
 
 describe("", () => {
   describe("POST /api/validData", () => {
-    test("Should add a valid record to the database", async () => {
-      const validRecord = {
-        full_name: "Alice Johnson",
-        email: "alice.john@example.com",
-      };
-
-      const res = await request(app).post("/api/validData").send(validRecord);
-
-      expect(res.statusCode).toBe(201); 
-      expect(res.body.full_name).toBe(validRecord.full_name); 
-      expect(res.body.email).toBe(validRecord.email); 
+    test("Should add multiple valid records to the database", async () => {
+      const validRecords = [
+        { full_name: "Alice Johnson", email: "alice.john@example.com" },
+        { full_name: "Bob Smith", email: "bob.smith@example.com" },
+      ];
+  
+      const res = await request(app).post("/api/validData").send(validRecords);
+  
+      expect(res.statusCode).toBe(201);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(validRecords.length);
+      res.body.forEach((record, index) => {
+        expect(record.full_name).toBe(validRecords[index].full_name);
+        expect(record.email).toBe(validRecords[index].email);
+      });
     });
   });
-
+  
   describe("POST /api/invalidData", () => {
-    test("Should add an invalid record to the database with error reason", async () => {
-      const invalidRecord = {
-        full_name: "",
-        email: "invalid-email",
-        error_reason: "Invalid email format",
-      };
-
-      const res = await request(app)
-        .post("/api/invalidData")
-        .send(invalidRecord);
-
-      expect(res.statusCode).toBe(201); 
-      expect(res.body.full_name).toBe(invalidRecord.full_name); 
-      expect(res.body.email).toBe(invalidRecord.email); 
-      expect(res.body.error_reason).toBe(invalidRecord.error_reason); 
+    test("Should add multiple invalid records to the database with error reasons", async () => {
+      const invalidRecords = [
+        {
+          full_name: "",
+          email: "invalid-email",
+          error_reason: "Invalid email format",
+        },
+        {
+          full_name: null,
+          email: "null.email@example.com",
+          error_reason: "Full name is missing",
+        },
+      ];
+  
+      const res = await request(app).post("/api/invalidData").send(invalidRecords);
+  
+      expect(res.statusCode).toBe(201);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(invalidRecords.length);
+      res.body.forEach((record, index) => {
+        expect(record.full_name).toBe(invalidRecords[index].full_name);
+        expect(record.email).toBe(invalidRecords[index].email);
+        expect(record.error_reason).toBe(invalidRecords[index].error_reason);
+      });
     });
   });
 

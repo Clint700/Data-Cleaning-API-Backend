@@ -29,9 +29,10 @@ const {
   
   const createValidData = async (req, res, next) => {
     try {
-      const record = await insertValidData(req.body);
-      console.log(record)
-      res.status(201).json(record);
+      const records = await Promise.all(
+        req.body.map((record) => insertValidData(record))
+      );
+      res.status(201).json(records);
     } catch (err) {
       next(err);
     }
@@ -39,11 +40,13 @@ const {
   
   const createInvalidData = async (req, res, next) => {
     try {
-      const record = await insertInvalidData(req.body);
-      res.status(201).json(record);
+      const records = await Promise.all(
+        req.body.map((record) => insertInvalidData(record))
+      );
+      res.status(201).json(records);
     } catch (err) {
       next(err);
-    }
+    };
   };
   
   const updateValidData = async (req, res, next) => {
